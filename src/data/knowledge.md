@@ -4,7 +4,7 @@
 
 ---
 
-## BLOCO 0 — Fundamentos Java para Web
+### BLOCO 0 — Fundamentos Java para Web
 
 ---
 
@@ -209,7 +209,7 @@ O framework gerencia o ciclo de vida dos objetos, resolve dependências automati
 
 ---
 
-## BLOCO 1 — Ambiente
+### BLOCO 1 — Ambiente
 
 ---
 
@@ -573,7 +573,7 @@ java -jar target/quarkus-app/quarkus-run.jar
 
 ---
 
-## BLOCO 2 — Desenvolvimento
+### BLOCO 2 — Desenvolvimento
 
 ---
 
@@ -1351,7 +1351,7 @@ ALTER TABLE produto ADD COLUMN descricao TEXT;
 
 ---
 
-## BLOCO 3 — Qualidade e entrega
+### BLOCO 3 — Qualidade e entrega
 
 ---
 
@@ -1789,7 +1789,7 @@ java -jar quarkus-run.jar
 
 ---
 
-## BLOCO 4 — Referência
+### BLOCO 4 — Referência
 
 ---
 
