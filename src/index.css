@@ -73,6 +73,12 @@ body {
   transition: all 0.15s;
 }
 .back-hub-btn:hover { border-color: var(--accent); color: var(--accent); }
+.theme-btn {
+  background: none; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  cursor: pointer; font-size: 15px; line-height: 1; padding: 5px 8px;
+  transition: all 0.15s;
+}
+.theme-btn:hover { border-color: var(--accent); }
 .menu-btn {
   display: none; background: none; border: 1px solid var(--border);
   color: var(--text-secondary); border-radius: var(--radius-sm);
@@ -214,3 +220,21 @@ body {
   .content-area { margin-left: 0; padding: 24px 20px; }
   .menu-btn { display: block; }
 }
+
+[data-theme="dark"] {
+  --bg-base: #1a1714;
+  --bg-surface: #2a2520;
+  --bg-elevated: #353028;
+  --bg-hover: #3d3830;
+  --border: #4a443a;
+  --border-strong: #6b6357;
+  --accent: #7fc1d9;
+  --accent-glow: rgba(127, 193, 217, 0.12);
+  --text-primary: #f2ede3;
+  --text-secondary: #c9bfae;
+  --text-muted: #958c7e;
+  --text-code: #7fc1d9;
+}
+[data-theme="dark"] .app-header { background: rgba(42,37,32,0.92); }
+[data-theme="dark"] .sidebar { background: var(--bg-surface); }
+[data-theme="dark"] .spring-badge { background: rgba(127, 193, 217, 0.12); border-color: rgba(127, 193, 217, 0.25); color: var(--accent); }
