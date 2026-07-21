@@ -66,6 +66,13 @@ body {
   background: rgba(109,179,63,0.08); border: 1px solid rgba(109,179,63,0.2);
   border-radius: 20px; padding: 4px 10px; font-family: var(--font-mono);
 }
+.back-hub-btn {
+  background: none; border: 1px solid var(--border);
+  color: var(--text-secondary); border-radius: var(--radius-sm);
+  padding: 5px 10px; cursor: pointer; font-size: 12px; font-family: var(--font-mono);
+  transition: all 0.15s;
+}
+.back-hub-btn:hover { border-color: var(--spring-green); color: var(--spring-green); }
 .menu-btn {
   display: none; background: none; border: 1px solid var(--border);
   color: var(--text-secondary); border-radius: var(--radius-sm);

@@ -57,6 +57,7 @@ function App() {
         <span className="header-subtitle">Spring → Quarkus</span>
         <div className="header-right">
           <span className="spring-badge">⚡ Para devs Spring</span>
+          <button className="back-hub-btn" onClick={() => window.location.href = 'https://hugosergio.com.br/guide/'}>← Guia Hub</button>
         </div>
       </header>
 
