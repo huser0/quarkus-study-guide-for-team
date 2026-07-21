@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
+import { flushSync } from 'react-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { parseKnowledge } from './utils/parseKnowledge'
@@ -10,6 +11,14 @@ const LAST_MOD_KEY = 'quarkus-last-module'
 
 function loadProgress() {
   try { return JSON.parse(localStorage.getItem(PROGRESS_KEY) || '{}') } catch { return {} }
+}
+
+function vt(fn) {
+  if (document.startViewTransition) {
+    document.startViewTransition(() => { flushSync(fn) })
+  } else {
+    fn()
+  }
 }
 
 function App() {
@@ -65,32 +74,39 @@ function App() {
   }
 
   function openModule(mod) {
-    setSearch('')
-    setActiveModule(mod)
-    setActiveSection(mod.sections[0]?.id || null)
-    setSidebarOpen(false)
-    localStorage.setItem(LAST_MOD_KEY, mod.id)
+    vt(() => {
+      setSearch('')
+      setActiveModule(mod)
+      setActiveSection(mod.sections[0]?.id || null)
+      setSidebarOpen(false)
+      localStorage.setItem(LAST_MOD_KEY, mod.id)
+    })
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   function goToSection(secId) {
-    setActiveSection(secId)
-    setSidebarOpen(false)
-    markViewed(secId)
+    vt(() => {
+      setActiveSection(secId)
+      setSidebarOpen(false)
+      markViewed(secId)
+    })
     const el = document.getElementById('sec-' + secId)
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   function goToIndex() {
-    setSearch('')
-    setActiveModule(null)
-    setActiveSection(null)
-    setSidebarOpen(false)
+    vt(() => {
+      setSearch('')
+      setActiveModule(null)
+      setActiveSection(null)
+      setSidebarOpen(false)
+    })
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const prevModule = moduleIndex > 0 ? modules[moduleIndex - 1] : null
   const nextModule = moduleIndex < modules.length - 1 ? modules[moduleIndex + 1] : null
+  const currentSections = activeModule?.sections || []
 
   useEffect(() => {
     function handleKey(e) {
@@ -105,7 +121,25 @@ function App() {
     return () => window.removeEventListener('keydown', handleKey)
   }, [activeModule, prevModule, nextModule, paletteOpen])
 
-  const currentSections = activeModule?.sections || []
+  // TOC scrollspy
+  useEffect(() => {
+    if (!activeModule || currentSections.length === 0) return
+    const els = currentSections.map(s => document.getElementById('sec-' + s.id)).filter(Boolean)
+    if (els.length === 0) return
+    const obs = new IntersectionObserver(
+      entries => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            const id = e.target.getAttribute('id')?.replace('sec-', '')
+            if (id) setActiveSection(id)
+          }
+        }
+      },
+      { rootMargin: '-80px 0px -60% 0px', threshold: 0 }
+    )
+    els.forEach(el => obs.observe(el))
+    return () => obs.disconnect()
+  }, [activeModule])
 
   return (
     <div className="app-layout">
@@ -202,7 +236,7 @@ function App() {
               <div className="content-inner" key={activeModule.id}>
                 <div className="mod-eyebrow">
                   Módulo {moduleIndex + 1} de {modules.length}
-                  <span className="kbd-hint">← → para navegar</span>
+                  <span className="kbd-hint">⌘K busca · ← → navega</span>
                 </div>
                 <h1 className="mod-title-h1">
                   {activeModule.title.replace(/Módulo \d+: /, '')}
@@ -254,6 +288,7 @@ function App() {
                       {sec.title}
                     </button>
                   ))}
+                  <div className="toc-hint">Scroll acompanha</div>
                 </aside>
               )}
             </div>
@@ -357,6 +392,7 @@ function CommandPalette({ modules, onOpen, onClose }) {
           <div className="palette-footer">
             <span>↑↓ navegar</span>
             <span>↵ abrir</span>
+            <span>⌘K buscar</span>
             <span>⎋ fechar</span>
           </div>
         )}
@@ -396,6 +432,7 @@ function WelcomeScreen({ modules, totalSections, totalViewed, onOpen }) {
         <div><div className="stat-val">{totalSections}</div><div className="stat-lbl">Tópicos</div></div>
         <div><div className="stat-val">{totalViewed}</div><div className="stat-lbl">Vistos</div></div>
         <div><div className="stat-val">⌘K</div><div className="stat-lbl">Busca rápida</div></div>
+        <div><div className="stat-val">←→</div><div className="stat-lbl">Navegação</div></div>
       </div>
 
       <div className="welcome-search">
@@ -420,6 +457,12 @@ function WelcomeScreen({ modules, totalSections, totalViewed, onOpen }) {
           )
         })}
         {filtered.length === 0 && <div className="search-empty">Nenhum módulo encontrado</div>}
+      </div>
+
+      <div className="shortcuts-hint">
+        <span>⌘K buscar global</span>
+        <span>← → navegar módulos</span>
+        <span>○ marcar lido</span>
       </div>
     </div>
   )
