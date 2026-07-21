@@ -1,3 +1,6 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+  "rewrites": [
+    { "source": "/quarkus-guide/:path*", "destination": "/:path*" },
+    { "source": "/(.*)", "destination": "/" }
+  ]
 }
