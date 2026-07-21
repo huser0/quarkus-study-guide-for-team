@@ -21,6 +21,10 @@ function App() {
   const [search, setSearch] = useState('')
   const [viewed, setViewed] = useState(loadProgress)
   const [paletteOpen, setPaletteOpen] = useState(false)
+  const [expandedMods, setExpandedMods] = useState(() => {
+    const lastId = localStorage.getItem(LAST_MOD_KEY)
+    return lastId ? new Set([lastId]) : new Set()
+  })
   const contentRef = useRef(null)
 
   useEffect(() => {
@@ -56,6 +60,15 @@ function App() {
       m.sections.some(s => s.title.toLowerCase().includes(q))
     )
   }, [modules, search])
+
+  function toggleExpanded(modId) {
+    setExpandedMods(prev => {
+      const next = new Set(prev)
+      if (next.has(modId)) next.delete(modId)
+      else next.add(modId)
+      return next
+    })
+  }
 
   function markViewed(secId) {
     if (viewed[secId]) return
@@ -163,15 +176,23 @@ function App() {
             {filteredModules.map((mod, i) => {
               const isActive = activeModule?.id === mod.id
               const realIndex = modules.findIndex(m => m.id === mod.id)
+              const expanded = expandedMods.has(mod.id)
               return (
                 <div key={mod.id}>
-                  <button className="mod-btn" onClick={() => openModule(mod)}>
-                    <div className={`mod-header ${isActive ? 'active' : ''}`}>
-                      <span className="mod-num">{String(realIndex + 1).padStart(2, '0')}</span>
-                      <span className="mod-title">{mod.title.replace(/Módulo \d+: /, '')}</span>
-                    </div>
-                  </button>
-                  {isActive && mod.sections.length > 0 && (
+                  <div className="mod-row">
+                    <button className="mod-btn mod-open-btn" onClick={() => openModule(mod)}>
+                      <div className={`mod-header ${isActive ? 'active' : ''}`}>
+                        <span className="mod-num">{String(realIndex + 1).padStart(2, '0')}</span>
+                        <span className="mod-title">{mod.title.replace(/Módulo \d+: /, '')}</span>
+                      </div>
+                    </button>
+                    {mod.sections.length > 0 && (
+                      <button className="mod-expand-btn" onClick={() => toggleExpanded(mod.id)}>
+                        <span className={`mod-chevron ${expanded ? 'open' : ''}`}>▸</span>
+                      </button>
+                    )}
+                  </div>
+                  {expanded && mod.sections.length > 0 && (
                     <div className="sec-list">
                       {mod.sections.map(sec => (
                         <button

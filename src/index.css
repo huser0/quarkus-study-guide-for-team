@@ -138,6 +138,19 @@ body {
 .mod-header.active .mod-num { color: var(--accent); }
 .mod-title { text-align: left; }
 
+.mod-row { display: flex; align-items: stretch; }
+.mod-open-btn { flex: 1; min-width: 0; }
+.mod-expand-btn {
+  background: none; border: none; cursor: pointer;
+  padding: 0 10px 0 4px; display: flex; align-items: center;
+  color: var(--text-muted); transition: color 0.12s;
+}
+.mod-expand-btn:hover { color: var(--text-primary); }
+.mod-chevron {
+  font-size: 9px; transition: transform 0.15s ease; display: block;
+}
+.mod-chevron.open { transform: rotate(90deg); }
+
 .sec-list { padding-left: 40px; padding-bottom: 4px; }
 .sec-btn {
   display: block; width: 100%; text-align: left; background: none;
